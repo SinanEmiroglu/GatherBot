@@ -7,7 +7,7 @@ public class NullAgent : BaseAgent
     public NullAgent(GameObject gameObject) : base(gameObject)
     {
     }
-
+    public override Resource BestResource { get; protected set; }
     public override List<Resource> Memory { get; protected set; }
 
     public override Type OnUpdate()

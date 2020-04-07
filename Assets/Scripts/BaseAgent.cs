@@ -18,9 +18,8 @@ public abstract class BaseAgent
     protected Movement movement;
 
     public Nest Nest { get; protected set; }
-    public Resource BestResource { get; protected set; }
     public abstract List<Resource> Memory { get; protected set; }
-
+    public abstract Resource BestResource { get; protected set; }
     public abstract System.Type OnUpdate();
     public virtual void TriggerEnter(Collider other) { }
     public virtual void TriggerExit(Collider other) { }
@@ -29,7 +28,7 @@ public abstract class BaseAgent
     protected virtual void LoadResource(Resource currentResource) { }
     protected virtual void UnloadResource() { }
 
-    protected Vector3 GetBestResourceLocation(List<Resource> memory)
+    protected Resource GetBestResource(List<Resource> memory)
     {
         Dictionary<float, Resource> sortedSources = new Dictionary<float, Resource>();
         float highestQuality = 0;
@@ -42,8 +41,7 @@ public abstract class BaseAgent
         }
 
         var resource = sortedSources.OrderByDescending(s => s.Key).FirstOrDefault().Value;
-        BestResource = resource;
 
-        return resource.transform.position;
+        return resource;
     }
 }

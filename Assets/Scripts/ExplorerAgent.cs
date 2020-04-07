@@ -7,6 +7,7 @@ public class ExplorerAgent : BaseAgent
     int maxMemory = 4;
     bool IsMemoryFull => Memory.Count >= maxMemory;
 
+    public override Resource BestResource { get; protected set; }
     public override List<Resource> Memory { get; protected set; }
 
     public ExplorerAgent(GameObject gameObject) : base(gameObject) { }

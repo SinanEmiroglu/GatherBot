@@ -10,9 +10,10 @@ public class UnemployedAgent : BaseAgent
     bool hasResourceToTarget;
 
     public override List<Resource> Memory { get; protected set; }
-
+    public override Resource BestResource { get; protected set; }
     public override void OnStart()
     {
+        BestResource = null;
     }
 
     public override Type OnUpdate()
@@ -20,10 +21,7 @@ public class UnemployedAgent : BaseAgent
         gameObject.name = "UnemployedAgent";
 
         if (hasResourceToTarget)
-        {
-            movement.Move();
             return typeof(EmployedAgent);
-        }
 
         movement.SetTarget = Nest.transform.position;
 
@@ -33,7 +31,8 @@ public class UnemployedAgent : BaseAgent
     public override void ShareKnowledge(BaseAgent sharingAgent)
     {
         var memory = Memory.Union(sharingAgent.Memory).ToList();
-        movement.SetTarget = GetBestResourceLocation(memory);
+        BestResource = GetBestResource(memory);
+        movement.SetTarget = BestResource.transform.position;
         hasResourceToTarget = true;
     }
 
@@ -49,8 +48,6 @@ public class UnemployedAgent : BaseAgent
     public override void TriggerExit(Collider other)
     {
         if (other.gameObject == Nest.gameObject)
-        {
             Nest.GetOut(this);
-        }
     }
 }

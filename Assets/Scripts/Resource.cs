@@ -10,20 +10,8 @@ public class Resource : MonoBehaviour
     {
         Amount = Random.Range(5, 20);
         SetScale();
-        Radius = transform.localScale.x / 2f;
+        Radius = transform.localScale.x * 0.5f;
     }
-
-    void SetScale()
-    {
-        transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, 0) * Amount * 0.2f;
-    }
-
-    float GetDistanceToNest()
-    {
-        var distance = Vector3.SqrMagnitude(transform.position - Game.Nest.transform.position);
-        return distance * distance;
-    }
-
     public void DecreaseAmount(int amount)
     {
         Amount -= amount;
@@ -32,6 +20,16 @@ public class Resource : MonoBehaviour
 
         if (Amount <= 1)
             Destroy(gameObject);
+    }
+    void SetScale()
+    {
+        transform.localScale = new Vector3(1, 1, 0) * Amount * 0.2f;
+    }
+
+    float GetDistanceToNest()
+    {
+        var distance = Vector3.SqrMagnitude(transform.position - Game.Nest.transform.position);
+        return distance * distance;
     }
 
     void OnDisable() => Game.Resources.Remove(this);

@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class AgentController : MonoBehaviour
 {
-    private Dictionary<Type, BaseAgent> availableAgents;
-    private BaseAgent currentAgent;
+    Dictionary<Type, BaseAgent> availableAgents;
+    BaseAgent currentAgent;
 
     public event Action<BaseAgent> OnAgentChanged = delegate { };
 

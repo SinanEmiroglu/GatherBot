@@ -23,11 +23,6 @@ public class Game : MonoBehaviour
         GenerateSources();
     }
 
-    void Start()
-    {
-
-    }
-
     void GenerateSources()
     {
         while (resourceCount >= resources.Count)
@@ -63,8 +58,13 @@ public class Game : MonoBehaviour
     public void StartGame()
     {
         GetAgent<ExplorerAgent>(1, 8);
-        GetAgent<UnemployedAgent>(1, 2);
-        //GetAgent<EmployedAgent>(5, 4);
+        GetAgent<UnemployedAgent>(4, 4);
+        GetAgent<EmployedAgent>(2, 3);
+    }
+
+    float RandomizeSpeed(float value)
+    {
+        return Random.Range(0.6f, 1.0f) * value;
     }
 
     void GetAgent<T>(int count, float speed) where T : BaseAgent
@@ -77,7 +77,7 @@ public class Game : MonoBehaviour
             var controller = newAgent.GetComponent<AgentController>();
 
             controller.SwitchAgent(typeof(T));
-            movement.Speed = speed;
+            movement.Speed = RandomizeSpeed(speed);
         }
     }
 
