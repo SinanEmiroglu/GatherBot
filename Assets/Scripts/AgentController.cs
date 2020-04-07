@@ -14,7 +14,6 @@ public class AgentController : MonoBehaviour
     {
         var availableAg = new Dictionary<Type, BaseAgent>()
         {
-            {typeof(NullAgent),new NullAgent(gameObject) },
             {typeof(ExplorerAgent),new ExplorerAgent(gameObject) },
             {typeof(UnemployedAgent),new UnemployedAgent(gameObject) },
             {typeof(EmployedAgent), new EmployedAgent(gameObject) }
@@ -35,8 +34,8 @@ public class AgentController : MonoBehaviour
             SwitchAgent(nextAgent);
     }
 
-    void OnTriggerEnter(Collider other) => currentAgent.TriggerEnter(other);
-    void OnTriggerExit(Collider other) => currentAgent.TriggerExit(other);
+    void OnTriggerEnter2D(Collider2D collision) => currentAgent.TriggerEnter(collision);
+    void OnTriggerExit2D(Collider2D collision) => currentAgent.TriggerExit(collision);
 
     public void SwitchAgent(Type nextAgent)
     {

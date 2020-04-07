@@ -9,61 +9,37 @@ public class EmployedAgent : BaseAgent
     private bool isLoaded;
     private bool isAbandon;
 
-    public override Resource BestResource { get; protected set; }
     public override List<Resource> Memory { get; protected set; }
     public EmployedAgent(GameObject gameObject) : base(gameObject) { }
-
-    public override void OnStart()
-    {
-        BestResource = Game.Resources.FirstOrDefault();
-        movement.SetTarget = BestResource.transform.position;
-        movement.Move();
-    }
-
+    Queue<Resource> gatherings;
     public override Type OnUpdate()
     {
-        gameObject.name = "EmployedAgent";
-        movement.Move();
+        SetAgentStatus();
+
+        if (Memory.Count == 0)
+            return typeof(UnemployedAgent);
 
         if (isAbandon)
         {
             isAbandon = false;
+            GetNextResource();
             return typeof(UnemployedAgent);
         }
         return typeof(EmployedAgent);
     }
 
-    public override void ShareKnowledge(BaseAgent sharingAgent)
+    void SetAgentStatus()
     {
-        var memory = Memory.Union(sharingAgent.Memory).ToList();
-        BestResource = GetBestResource(memory);
-        movement.SetTarget = BestResource.transform.position;
+        gameObject.name = "EmployedAgent";
+        renderer.color = Color.green;
+        movement.Move();
+    }
+    private void GetNextResource()
+    {
+
     }
 
-    protected override void LoadResource(Resource currentResource)
-    {
-        movement.SetTarget = Nest.transform.position;
-        currentResource.DecreaseAmount(loadAmount);
-        isLoaded = true;
-    }
-
-    protected override void UnloadResource()
-    {
-        if (isLoaded)
-        {
-            if (BestResource == null)
-                isAbandon = true;
-            else
-            {
-                Nest.ResourceAmount += loadAmount;
-                isLoaded = false;
-                //BestResource = GetBestResource(Memory);
-                movement.SetTarget = BestResource.transform.position;
-            }
-        }
-    }
-
-    public override void TriggerEnter(Collider other)
+    public override void TriggerEnter(Collider2D other)
     {
         if (other.GetComponent<Resource>() != null)
         {
@@ -80,9 +56,53 @@ public class EmployedAgent : BaseAgent
         }
     }
 
-    public override void TriggerExit(Collider other)
+    public override void TriggerExit(Collider2D other)
     {
         if (other.gameObject == Nest.gameObject)
             Nest.GetOut(this);
+    }
+
+    public override void GetResourceRecord(List<Resource> res)
+    {
+        var memory = Memory.Union(res).ToList();
+        BestResource = GetBestResource(memory);
+        movement.SetTarget = BestResource.transform.position;
+
+    }
+
+    protected override void LoadResource(Resource currentResource)
+    {
+        //CHECK QUALITY OF THE RESOURCE
+        movement.SetTarget = Nest.transform.position;
+        currentResource.DecreaseAmount(loadAmount);
+        BestResource = GetBestResource();
+        isLoaded = true;
+    }
+
+    private Resource GetBestResource()
+    {
+        Resource src = new Resource();
+        if (Memory.Count > 0)
+        {
+            gatherings = new Queue<Resource>(Memory.OrderByDescending(x => x.Amount));
+            src = gatherings.Dequeue();
+        }
+
+        return src;
+    }
+
+    protected override void UnloadResource()
+    {
+        if (isLoaded)
+        {
+            if (BestResource == null)
+                isAbandon = true;
+            else
+            {
+                Nest.ResourceAmount += loadAmount;
+                isLoaded = false;
+                movement.SetTarget = BestResource.transform.position;
+            }
+        }
     }
 }

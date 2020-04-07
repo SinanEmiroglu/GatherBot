@@ -9,22 +9,25 @@ public abstract class BaseAgent
         this.gameObject = gameObject;
         transform = gameObject.transform;
         movement = transform.GetComponent<Movement>();
+        renderer = transform.GetComponent<SpriteRenderer>();
         Nest = Game.Nest;
         Memory = new List<Resource>();
     }
 
     protected GameObject gameObject;
     protected Transform transform;
+    protected SpriteRenderer renderer;
     protected Movement movement;
+    protected Nest Nest;
 
-    public Nest Nest { get; protected set; }
+    public static Resource BestResource;
+
     public abstract List<Resource> Memory { get; protected set; }
-    public abstract Resource BestResource { get; protected set; }
     public abstract System.Type OnUpdate();
-    public virtual void TriggerEnter(Collider other) { }
-    public virtual void TriggerExit(Collider other) { }
+    public virtual void TriggerEnter(Collider2D other) { }
+    public virtual void TriggerExit(Collider2D other) { }
     public virtual void OnStart() { }
-    public abstract void ShareKnowledge(BaseAgent sharingAgent);
+    public virtual void GetResourceRecord(List<Resource> res) { }
     protected virtual void LoadResource(Resource currentResource) { }
     protected virtual void UnloadResource() { }
 

@@ -5,7 +5,7 @@ public class Game : MonoBehaviour
 {
     [SerializeField] private float radiusOfArea;
     [SerializeField] private int resourceCount;
-    [SerializeField] private GameObject agentPrefab;
+    [SerializeField] private AgentController agentPrefab;
     [SerializeField] private Nest nestPrefab;
     [SerializeField] private Resource resourcePrefab;
 
@@ -19,7 +19,7 @@ public class Game : MonoBehaviour
     {
         if (instance == null)
             instance = this;
-
+        
         GenerateSources();
     }
 
@@ -31,7 +31,7 @@ public class Game : MonoBehaviour
             var resource = Instantiate(resourcePrefab, GetRandomPosition(), Quaternion.identity);
             var distanceToNest = Vector3.SqrMagnitude(nestPrefab.transform.position - resource.transform.position);
 
-            if (distanceToNest <= (resource.Radius * resource.Radius) + 4f)
+            if (distanceToNest <= (resource.Radius * resource.Radius) + 6f)
             {
                 Destroy(resource.gameObject);
                 isIntersect = true;
@@ -59,7 +59,6 @@ public class Game : MonoBehaviour
     {
         GetAgent<ExplorerAgent>(1, 8);
         GetAgent<UnemployedAgent>(4, 4);
-        GetAgent<EmployedAgent>(2, 3);
     }
 
     float RandomizeSpeed(float value)
@@ -74,9 +73,8 @@ public class Game : MonoBehaviour
             var newAgent = Instantiate(agentPrefab, nestPrefab.transform.position, Quaternion.identity);
 
             var movement = newAgent.GetComponent<Movement>();
-            var controller = newAgent.GetComponent<AgentController>();
 
-            controller.SwitchAgent(typeof(T));
+            newAgent.SwitchAgent(typeof(T));
             movement.Speed = RandomizeSpeed(speed);
         }
     }

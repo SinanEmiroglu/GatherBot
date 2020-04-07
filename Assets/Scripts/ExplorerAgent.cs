@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ExplorerAgent : BaseAgent
@@ -7,9 +8,8 @@ public class ExplorerAgent : BaseAgent
     int maxMemory = 4;
     bool IsMemoryFull => Memory.Count >= maxMemory;
 
-    public override Resource BestResource { get; protected set; }
     public override List<Resource> Memory { get; protected set; }
-
+    List<Resource> resourceRecord = new List<Resource>();
     public ExplorerAgent(GameObject gameObject) : base(gameObject) { }
 
     public override void OnStart()
@@ -30,7 +30,7 @@ public class ExplorerAgent : BaseAgent
         return typeof(ExplorerAgent);
     }
 
-    public override void TriggerEnter(Collider other)
+    public override void TriggerEnter(Collider2D other)
     {
         if (other.GetComponent<Resource>() != null)
         {
@@ -39,24 +39,20 @@ public class ExplorerAgent : BaseAgent
 
         if (other.gameObject == Nest.gameObject && IsMemoryFull)
         {
-            Nest.OnKnowledgeShared(this);
+            resourceRecord = resourceRecord.Union(Memory).ToList();
+            Nest.OnKnowledgeShared(resourceRecord);
+
+            Memory.Clear();
             movement.SetTarget = Game.instance.GetRandomPosition();
         }
     }
-    public override void TriggerExit(Collider other)
-    {
-        if (other.gameObject == Nest.gameObject && IsMemoryFull)
-        {
-            Memory.Clear();
-        }
-    }
+
     void Exploit(Resource currentSource)
     {
-        if (!Memory.Contains(currentSource))
+        if (!Memory.Contains(currentSource) && !IsMemoryFull)
         {
+            currentSource.Explored();
             Memory.Add(currentSource);
         }
     }
-
-    public override void ShareKnowledge(BaseAgent sharingAgent) { }
 }

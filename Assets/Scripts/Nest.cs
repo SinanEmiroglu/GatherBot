@@ -1,28 +1,22 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Nest : MonoBehaviour
 {
     public int ResourceAmount;
 
-    private List<BaseAgent> agentsInNest = new List<BaseAgent>();
-
-    private void Awake()
-    {
-        ResourceAmount = 150;
-    }
+    List<BaseAgent> agentsInNest = new List<BaseAgent>();
 
     public void GetIn(BaseAgent agent) => agentsInNest.Add(agent);
     public void GetOut(BaseAgent agent) => agentsInNest.Remove(agent);
 
-    public void OnKnowledgeShared(BaseAgent sharingAgent)
+    public void OnKnowledgeShared(List<Resource> resources)
     {
-        //if (sharingAgent.Memory.Count > 0)
-       // {
-            for (int i = 0; i < agentsInNest.Count; i++)
-            {
-                agentsInNest[i].ShareKnowledge(sharingAgent);
-            }
-      //  }
+        for (int i = 0; i < agentsInNest.Count; i++)
+        {
+            agentsInNest[i].GetResourceRecord(resources);
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -6,21 +7,13 @@ using UnityEngine;
 public class UnemployedAgent : BaseAgent
 {
     public UnemployedAgent(GameObject gameObject) : base(gameObject) { }
-
-    bool hasResourceToTarget;
-
     public override List<Resource> Memory { get; protected set; }
-    public override Resource BestResource { get; protected set; }
-    public override void OnStart()
-    {
-        BestResource = null;
-    }
-
+    Queue<Resource> gatheringOrder;
     public override Type OnUpdate()
     {
-        gameObject.name = "UnemployedAgent";
+        SetAgentStatus();
 
-        if (hasResourceToTarget)
+        if (BestResource != null)
             return typeof(EmployedAgent);
 
         movement.SetTarget = Nest.transform.position;
@@ -28,26 +21,39 @@ public class UnemployedAgent : BaseAgent
         return typeof(UnemployedAgent);
     }
 
-    public override void ShareKnowledge(BaseAgent sharingAgent)
+    void SetAgentStatus()
     {
-        var memory = Memory.Union(sharingAgent.Memory).ToList();
-        BestResource = GetBestResource(memory);
-        movement.SetTarget = BestResource.transform.position;
-        hasResourceToTarget = true;
+        gameObject.name = "UnemployedAgent";
+        renderer.color = Color.blue;
     }
 
-    public override void TriggerEnter(Collider other)
+    public override void GetResourceRecord(List<Resource> resources)
+    {
+        var memory = Memory.Union(resources).ToList();
+        gatheringOrder = new Queue<Resource>(memory.OrderByDescending(x => x.Amount));
+        // BestResource = GetBestResource(memory);
+
+    }
+
+    public override void TriggerEnter(Collider2D other)
     {
         if (other.gameObject == Nest.gameObject)
-        {
             Nest.GetIn(this);
-            UnloadResource();
-        }
     }
 
-    public override void TriggerExit(Collider other)
+    public override void TriggerExit(Collider2D other)
     {
         if (other.gameObject == Nest.gameObject)
             Nest.GetOut(this);
+    }
+    IEnumerator GatheringResources()
+    {
+        if (gatheringOrder.Count > 0)
+        {
+            BestResource = gatheringOrder.Dequeue();
+            movement.SetTarget = BestResource.transform.position;
+        }
+        yield return new WaitUntil(() => BestResource == null);
+
     }
 }
