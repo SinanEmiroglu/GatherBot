@@ -445,7 +445,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   radiusOfArea: 9
   resourceCount: 9
-  agentPrefab: {fileID: 8109364634528109465, guid: 57f6be9d60c309342b108c8c8f8fb76b,
+  agentPrefab: {fileID: 7230853640932862421, guid: 57f6be9d60c309342b108c8c8f8fb76b,
     type: 3}
   nestPrefab: {fileID: 137605743}
   resourcePrefab: {fileID: 3157290541439480740, guid: dd11462fea8298b43b6a778ef3f75c07,

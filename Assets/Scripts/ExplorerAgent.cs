@@ -39,7 +39,7 @@ public class ExplorerAgent : BaseAgent
 
         if (other.gameObject == Nest.gameObject && IsMemoryFull)
         {
-            Nest.OnKnowledgeShared(this);
+          //  Nest.OnKnowledgeShared(this);
             movement.SetTarget = Game.instance.GetRandomPosition();
         }
     }

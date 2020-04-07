@@ -21,9 +21,11 @@ public class UnemployedAgent : BaseAgent
         gameObject.name = "UnemployedAgent";
 
         if (hasResourceToTarget)
-            return typeof(EmployedAgent);
+        {
 
-        movement.SetTarget = Nest.transform.position;
+            movement.SetTarget = Nest.transform.position;
+            movement.Stop();
+        }
 
         return typeof(UnemployedAgent);
     }
@@ -40,14 +42,14 @@ public class UnemployedAgent : BaseAgent
     {
         if (other.gameObject == Nest.gameObject)
         {
-            Nest.GetIn(this);
+            //Nest.GetIn(this);
             UnloadResource();
         }
     }
 
     public override void TriggerExit(Collider other)
     {
-        if (other.gameObject == Nest.gameObject)
-            Nest.GetOut(this);
+        //if (other.gameObject == Nest.gameObject)
+        //Nest.GetOut(this);
     }
 }

@@ -75,14 +75,14 @@ public class EmployedAgent : BaseAgent
 
         if (other.gameObject == Nest.gameObject)
         {
-            Nest.GetIn(this);
+           // Nest.GetIn(this);
             UnloadResource();
         }
     }
 
     public override void TriggerExit(Collider other)
     {
-        if (other.gameObject == Nest.gameObject)
-            Nest.GetOut(this);
+        //if (other.gameObject == Nest.gameObject)
+            //Nest.GetOut(this);
     }
 }

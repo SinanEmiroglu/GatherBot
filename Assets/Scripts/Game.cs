@@ -5,7 +5,7 @@ public class Game : MonoBehaviour
 {
     [SerializeField] private float radiusOfArea;
     [SerializeField] private int resourceCount;
-    [SerializeField] private GameObject agentPrefab;
+    [SerializeField] private Agent agentPrefab;
     [SerializeField] private Nest nestPrefab;
     [SerializeField] private Resource resourcePrefab;
 
@@ -57,27 +57,37 @@ public class Game : MonoBehaviour
 
     public void StartGame()
     {
-        GetAgent<ExplorerAgent>(1, 8);
-        GetAgent<UnemployedAgent>(4, 4);
-        GetAgent<EmployedAgent>(2, 3);
+        GetAgent(1, 8, AgentStatus.Explorer);
+        GetAgent(4, 4, AgentStatus.Unemployed);
+        GetAgent(2, 3, AgentStatus.Employed);
     }
 
+    //void GetAgent<T>(int count, float speed) where T : BaseAgent
+    //{
+    //    for (int i = 0; i < count; i++)
+    //    {
+    //        var newAgent = Instantiate(agentPrefab, nestPrefab.transform.position, Quaternion.identity);
+
+    //        var movement = newAgent.GetComponent<Movement>();
+    //        var controller = newAgent.GetComponent<AgentController>();
+
+    //        //controller.SwitchAgent(typeof(T));
+    //        movement.Speed = RandomizeSpeed(speed);
+    //    }
+    //}
     float RandomizeSpeed(float value)
     {
         return Random.Range(0.6f, 1.0f) * value;
     }
 
-    void GetAgent<T>(int count, float speed) where T : BaseAgent
+    void GetAgent(int count, float speed, AgentStatus status)
     {
         for (int i = 0; i < count; i++)
         {
             var newAgent = Instantiate(agentPrefab, nestPrefab.transform.position, Quaternion.identity);
 
-            var movement = newAgent.GetComponent<Movement>();
-            var controller = newAgent.GetComponent<AgentController>();
-
-            controller.SwitchAgent(typeof(T));
-            movement.Speed = RandomizeSpeed(speed);
+            newAgent.Status = status;
+            newAgent.Movement.Speed = RandomizeSpeed(speed);
         }
     }
 

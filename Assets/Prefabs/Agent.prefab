@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 312700414841805050}
   - component: {fileID: -3830587330666216581}
   - component: {fileID: 7707009609039939946}
-  - component: {fileID: 6466736907115654062}
   - component: {fileID: 3417199977652770460}
+  - component: {fileID: 7230853640932862421}
   m_Layer: 8
   m_Name: Agent
   m_TagString: Untagged
@@ -112,18 +112,6 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &6466736907115654062
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8109364634528109465}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4892e8057d319954e8ed7346df57bb32, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &3417199977652770460
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -137,3 +125,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Speed: 0
+--- !u!114 &7230853640932862421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8109364634528109465}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4a008a4c10738a4289c257e0d4065dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  BestResource: {fileID: 0}
+  Memory: []
+  Status: 0
