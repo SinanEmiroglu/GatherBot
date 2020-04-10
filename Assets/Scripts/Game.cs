@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class Game : MonoBehaviour
 {
-    [SerializeField] private float radiusOfArea;
-    [SerializeField] private int resourceCount;
-    [SerializeField] private AgentController agentPrefab;
-    [SerializeField] private Nest nestPrefab;
-    [SerializeField] private Resource resourcePrefab;
+    [SerializeField] float radiusOfArea;
+    [SerializeField] int resourceCount;
+    [SerializeField] AgentController agentPrefab;
+    [SerializeField] Nest nestPrefab;
+    [SerializeField] Resource resourcePrefab;
 
     public static Game instance;
     public static Nest Nest => instance.nestPrefab;

@@ -1,50 +1,30 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public abstract class BaseAgent
 {
-    public BaseAgent(GameObject gameObject)
-    {
-        this.gameObject = gameObject;
-        transform = gameObject.transform;
-        movement = transform.GetComponent<Movement>();
-        renderer = transform.GetComponent<SpriteRenderer>();
-        Nest = Game.Nest;
-        Memory = new List<Resource>();
-    }
-
-    protected GameObject gameObject;
-    protected Transform transform;
-    protected SpriteRenderer renderer;
+    protected GameObject _gameObject;
+    protected Transform _transform;
+    protected SpriteRenderer _renderer;
     protected Movement movement;
-    protected Nest Nest;
+    protected Nest nest;
 
-    public static Resource BestResource;
+    protected Stack<Resource> orderedResources { get; set; }
 
-    public abstract List<Resource> Memory { get; protected set; }
     public abstract System.Type OnUpdate();
+
+    public virtual void OnEnable() { }
+    public virtual void OnDisable() { }
     public virtual void TriggerEnter(Collider2D other) { }
     public virtual void TriggerExit(Collider2D other) { }
-    public virtual void OnStart() { }
-    public virtual void GetResourceRecord(List<Resource> res) { }
-    protected virtual void LoadResource(Resource currentResource) { }
-    protected virtual void UnloadResource() { }
 
-    protected Resource GetBestResource(List<Resource> memory)
+    public BaseAgent(GameObject gameObject)
     {
-        Dictionary<float, Resource> sortedSources = new Dictionary<float, Resource>();
-        float highestQuality = 0;
-
-        foreach (var src in memory)
-        {
-            highestQuality = src.Amount / src.Distance;
-
-            sortedSources.Add(highestQuality, src);
-        }
-
-        var resource = sortedSources.OrderByDescending(s => s.Key).FirstOrDefault().Value;
-
-        return resource;
+        _gameObject = gameObject;
+        _transform = gameObject.transform;
+        _renderer = gameObject.GetComponent<SpriteRenderer>();
+        movement = gameObject.GetComponent<Movement>();
+        nest = Game.Nest;
+        //orderedResources = new Stack<Resource>();
     }
 }

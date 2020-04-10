@@ -1,31 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
+[DisallowMultipleComponent]
 public class ExplorerAgent : BaseAgent
 {
     int maxMemory = 4;
-    bool IsMemoryFull => Memory.Count >= maxMemory;
+    bool IsMemoryFull => memory.Count >= maxMemory;
 
-    public override List<Resource> Memory { get; protected set; }
-    List<Resource> resourceRecord = new List<Resource>();
+    List<Resource> memory = new List<Resource>();
+
     public ExplorerAgent(GameObject gameObject) : base(gameObject) { }
 
-    public override void OnStart()
+    public override void OnEnable()
     {
-        gameObject.name = "ExplorerAgent";
-        movement.SetTarget = Nest.transform.position;
-        movement.Move();
+        _gameObject.name = "ExplorerAgent";
+        Explore();
     }
 
     public override Type OnUpdate()
     {
         if (IsMemoryFull)
-            movement.SetTarget = Nest.transform.position;
+            movement.SetTarget = nest.transform.position;
 
         if (movement.IsTargetReached())
-            movement.SetTarget = Game.instance.GetRandomPosition();
+            Explore();
 
         return typeof(ExplorerAgent);
     }
@@ -33,26 +32,29 @@ public class ExplorerAgent : BaseAgent
     public override void TriggerEnter(Collider2D other)
     {
         if (other.GetComponent<Resource>() != null)
-        {
             Exploit(other.GetComponent<Resource>());
-        }
 
-        if (other.gameObject == Nest.gameObject && IsMemoryFull)
+        if (other.gameObject == nest.gameObject && IsMemoryFull)
         {
-            resourceRecord = resourceRecord.Union(Memory).ToList();
-            Nest.OnKnowledgeShared(resourceRecord);
+            nest.SetExploredResources(memory);
 
-            Memory.Clear();
-            movement.SetTarget = Game.instance.GetRandomPosition();
+            memory.Clear();
+            Explore();
         }
+    }
+
+    void Explore()
+    {
+        movement.SetTarget = Game.instance.GetRandomPosition();
+        movement.Move();
     }
 
     void Exploit(Resource currentSource)
     {
-        if (!Memory.Contains(currentSource) && !IsMemoryFull)
+        if (!memory.Contains(currentSource) && !IsMemoryFull)
         {
             currentSource.Explored();
-            Memory.Add(currentSource);
+            memory.Add(currentSource);
         }
     }
 }

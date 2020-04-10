@@ -1,108 +1,82 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
+[DisallowMultipleComponent]
 public class EmployedAgent : BaseAgent
 {
-    private int loadAmount = 1;
-    private bool isLoaded;
-    private bool isAbandon;
+    int loadAmount = 1;
+    bool isLoaded;
+    Resource targetResource;
 
-    public override List<Resource> Memory { get; protected set; }
     public EmployedAgent(GameObject gameObject) : base(gameObject) { }
-    Queue<Resource> gatherings;
-    public override Type OnUpdate()
+
+    public override void OnEnable()
     {
-        SetAgentStatus();
-
-        if (Memory.Count == 0)
-            return typeof(UnemployedAgent);
-
-        if (isAbandon)
-        {
-            isAbandon = false;
-            GetNextResource();
-            return typeof(UnemployedAgent);
-        }
-        return typeof(EmployedAgent);
-    }
-
-    void SetAgentStatus()
-    {
-        gameObject.name = "EmployedAgent";
-        renderer.color = Color.green;
+        _gameObject.name = "EmployedAgent";
+        _renderer.color = Color.green;
+        Debug.Log(orderedResources.Count);
+        targetResource = GetBestResource();
+        movement.SetTarget = targetResource.transform.position;
         movement.Move();
     }
-    private void GetNextResource()
-    {
 
+    public override Type OnUpdate()
+    {
+        if (orderedResources.Count <= 0)
+            return typeof(UnemployedAgent);
+
+        return typeof(EmployedAgent);
     }
 
     public override void TriggerEnter(Collider2D other)
     {
         if (other.GetComponent<Resource>() != null)
         {
-            if (BestResource == other.GetComponent<Resource>())
+            if (targetResource == other.GetComponent<Resource>())
             {
-                LoadResource(BestResource);
+                LoadResource(targetResource);
             }
         }
 
-        if (other.gameObject == Nest.gameObject)
+        if (other.gameObject == nest.gameObject)
         {
-            Nest.GetIn(this);
             UnloadResource();
+
+            GetBestResource();
         }
     }
 
-    public override void TriggerExit(Collider2D other)
+    void LoadResource(Resource currentResource)
     {
-        if (other.gameObject == Nest.gameObject)
-            Nest.GetOut(this);
-    }
-
-    public override void GetResourceRecord(List<Resource> res)
-    {
-        var memory = Memory.Union(res).ToList();
-        BestResource = GetBestResource(memory);
-        movement.SetTarget = BestResource.transform.position;
-
-    }
-
-    protected override void LoadResource(Resource currentResource)
-    {
-        //CHECK QUALITY OF THE RESOURCE
-        movement.SetTarget = Nest.transform.position;
+        movement.SetTarget = nest.transform.position;
         currentResource.DecreaseAmount(loadAmount);
-        BestResource = GetBestResource();
         isLoaded = true;
     }
 
-    private Resource GetBestResource()
-    {
-        Resource src = new Resource();
-        if (Memory.Count > 0)
-        {
-            gatherings = new Queue<Resource>(Memory.OrderByDescending(x => x.Amount));
-            src = gatherings.Dequeue();
-        }
-
-        return src;
-    }
-
-    protected override void UnloadResource()
+    void UnloadResource()
     {
         if (isLoaded)
         {
-            if (BestResource == null)
-                isAbandon = true;
+            var newTarget = GetBestResource();
+            if (targetResource != newTarget)
+                Abandon();
             else
             {
-                Nest.ResourceAmount += loadAmount;
+                nest.ResourceAmount += loadAmount;
                 isLoaded = false;
-                movement.SetTarget = BestResource.transform.position;
+
+                movement.SetTarget = targetResource.transform.position;
             }
         }
+    }
+
+    void Abandon()
+    {
+        targetResource = GetBestResource();
+    }
+
+    Resource GetBestResource()
+    {
+        return orderedResources.Peek();
     }
 }

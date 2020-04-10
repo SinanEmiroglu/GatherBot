@@ -5,23 +5,28 @@ using UnityEngine;
 
 public class AgentController : MonoBehaviour
 {
-    Dictionary<Type, BaseAgent> availableAgents;
     BaseAgent currentAgent;
+    Dictionary<Type, BaseAgent> availableAgents;
 
-    public event Action<BaseAgent> OnAgentChanged = delegate { };
+    public void SwitchAgent(Type nextAgent)
+    {
+        if (availableAgents.TryGetValue(nextAgent, out BaseAgent value))
+        {
+            currentAgent = value;
+            currentAgent.OnEnable();
+        }
+    }
 
     void Awake()
     {
-        var availableAg = new Dictionary<Type, BaseAgent>()
+        var agents = new Dictionary<Type, BaseAgent>()
         {
             {typeof(ExplorerAgent),new ExplorerAgent(gameObject) },
             {typeof(UnemployedAgent),new UnemployedAgent(gameObject) },
             {typeof(EmployedAgent), new EmployedAgent(gameObject) }
         };
-        availableAgents = availableAg;
+        availableAgents = agents;
     }
-
-    void Start() => currentAgent.OnStart();
 
     void Update()
     {
@@ -36,12 +41,5 @@ public class AgentController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision) => currentAgent.TriggerEnter(collision);
     void OnTriggerExit2D(Collider2D collision) => currentAgent.TriggerExit(collision);
-
-    public void SwitchAgent(Type nextAgent)
-    {
-        if (availableAgents.TryGetValue(nextAgent, out BaseAgent value))
-            currentAgent = value;
-
-        OnAgentChanged?.Invoke(currentAgent);
-    }
+    void OnDisable() => currentAgent.OnDisable();
 }

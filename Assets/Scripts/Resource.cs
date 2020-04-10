@@ -5,7 +5,9 @@ public class Resource : MonoBehaviour
     public int Amount { get; private set; }
     public float Radius { get; private set; }
     public float Distance => GetDistanceToNest();
-    SpriteRenderer renderer;
+
+    new SpriteRenderer renderer;
+
     public void DecreaseAmount(int amount)
     {
         Amount -= amount;
@@ -16,6 +18,11 @@ public class Resource : MonoBehaviour
             Destroy(gameObject);
     }
 
+    public void Explored()
+    {
+        renderer.color = Color.yellow;
+    }
+
     void Awake()
     {
         renderer = GetComponent<SpriteRenderer>();
@@ -23,6 +30,7 @@ public class Resource : MonoBehaviour
         Amount = Random.Range(5, 20);
         SetScale();
         Radius = GetComponent<CircleCollider2D>().radius;
+        gameObject.name = "Resource[" + Amount + "]";
     }
 
     void SetScale() => transform.localScale = new Vector3(1, 1, 0) * Amount * 0.1f;
@@ -32,9 +40,6 @@ public class Resource : MonoBehaviour
         var distance = Vector3.SqrMagnitude(transform.position - Game.Nest.transform.position);
         return distance * distance;
     }
-    public void Explored() 
-    {
-        renderer.color = Color.yellow;
-    }
+
     void OnDisable() => Game.Resources.Remove(this);
 }
