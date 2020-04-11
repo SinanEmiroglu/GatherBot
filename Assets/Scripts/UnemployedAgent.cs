@@ -1,49 +1,49 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
-[DisallowMultipleComponent]
 public class UnemployedAgent : BaseAgent
 {
-    public UnemployedAgent(GameObject gameObject) : base(gameObject) {
-        orderedResources = new Stack<Resource>();
-    }
+    Resource targetResource;
+
+    public UnemployedAgent(GameObject gameObject) : base(gameObject) { }
 
     public override Type OnUpdate()
     {
-        SetAgentStatus();
+        SetStatus();
 
-        if (orderedResources.Count > 0)
+        if (targetResource != null)
             return typeof(EmployedAgent);
 
         return typeof(UnemployedAgent);
     }
 
-    public override void OnEnable()
+    public override void TriggerEnter(Collider2D other)
     {
         nest.OnInfoArrived += InfoArrivedHandler;
     }
 
-    public override void OnDisable()
+    public override void TriggerExit(Collider2D other)
     {
         nest.OnInfoArrived -= InfoArrivedHandler;
     }
 
-    void InfoArrivedHandler(List<Resource> exploredResource)
+    void InfoArrivedHandler()
     {
-        if (exploredResource.Count > 0)
-        {
-            orderedResources = nest.GetOrderedResources();
-        }
+        Recruit();
     }
 
-    void SetAgentStatus()
+    void SetStatus()
     {
         _gameObject.name = "UnemployedAgent";
         _renderer.color = Color.blue;
         movement.SetTarget = nest.transform.position;
+
+        if (movement.IsTargetReached() && Nest.orderedResources.Count > 0)
+            Recruit();
     }
 
-    
+    void Recruit()
+    {
+        targetResource = GetBestResource();
+    }
 }

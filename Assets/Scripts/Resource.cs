@@ -1,12 +1,16 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 
 public class Resource : MonoBehaviour
 {
+    public TextMeshPro amountText;
     public int Amount { get; private set; }
     public float Radius { get; private set; }
     public float Distance => GetDistanceToNest();
+    public bool IsDestroyed { get; private set; }
+    public bool IsExplored { get; private set; }
 
-    new SpriteRenderer renderer;
+    SpriteRenderer _renderer;
 
     public void DecreaseAmount(int amount)
     {
@@ -18,20 +22,26 @@ public class Resource : MonoBehaviour
             Destroy(gameObject);
     }
 
-    public void Explored()
+    public void ExploreResource()
     {
-        renderer.color = Color.yellow;
+        amountText.gameObject.SetActive(true);
+        amountText.text = Amount.ToString();
+        _renderer.color = Color.yellow;
+        IsExplored = true;
     }
 
     void Awake()
     {
-        renderer = GetComponent<SpriteRenderer>();
-        renderer.color = Color.black;
+        IsExplored = false;
+        _renderer = GetComponent<SpriteRenderer>();
+        _renderer.color = Color.gray;
         Amount = Random.Range(5, 20);
         SetScale();
         Radius = GetComponent<CircleCollider2D>().radius;
         gameObject.name = "Resource[" + Amount + "]";
     }
+
+    void OnTriggerEnter2D(Collider2D collision) => amountText.text = Amount.ToString();
 
     void SetScale() => transform.localScale = new Vector3(1, 1, 0) * Amount * 0.1f;
 
@@ -41,5 +51,5 @@ public class Resource : MonoBehaviour
         return distance * distance;
     }
 
-    void OnDisable() => Game.Resources.Remove(this);
+    void OnDisable() => IsDestroyed = true;
 }

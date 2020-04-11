@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[DisallowMultipleComponent]
 public class ExplorerAgent : BaseAgent
 {
-    int maxMemory = 4;
-    bool IsMemoryFull => memory.Count >= maxMemory;
-
+    int maxMemory = 3;
     List<Resource> memory = new List<Resource>();
+    bool IsMemoryFull => memory.Count >= maxMemory;
 
     public ExplorerAgent(GameObject gameObject) : base(gameObject) { }
 
@@ -36,8 +34,8 @@ public class ExplorerAgent : BaseAgent
 
         if (other.gameObject == nest.gameObject && IsMemoryFull)
         {
+            memory.RemoveAll(n => n == null);
             nest.SetExploredResources(memory);
-
             memory.Clear();
             Explore();
         }
@@ -49,12 +47,12 @@ public class ExplorerAgent : BaseAgent
         movement.Move();
     }
 
-    void Exploit(Resource currentSource)
+    void Exploit(Resource resource)
     {
-        if (!memory.Contains(currentSource) && !IsMemoryFull)
+        if (!IsMemoryFull && !resource.IsExplored)
         {
-            currentSource.Explored();
-            memory.Add(currentSource);
+            resource.ExploreResource();
+            memory.Add(resource);
         }
     }
 }

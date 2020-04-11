@@ -1,35 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public class Nest : MonoBehaviour
 {
     public int ResourceAmount;
-    public event Action<List<Resource>> OnInfoArrived = delegate { };
+    public TextMeshPro amountText;
+    public event Action OnInfoArrived = delegate { };
+    public static List<Resource> orderedResources = new List<Resource>();
 
-    List<Resource> exploredResources = new List<Resource>();
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        amountText.gameObject.SetActive(true);
+        amountText.text = ResourceAmount.ToString();
+    }
 
     public void SetExploredResources(List<Resource> resources)
     {
-        exploredResources = exploredResources.Union(resources).ToList();
-        OnInfoArrived?.Invoke(exploredResources);
-    }
+        orderedResources = orderedResources.Union(resources).ToList();
+        orderedResources.RemoveAll(r => r == null);
 
-    public Stack<Resource> GetOrderedResources()
-    {
         Dictionary<float, Resource> sortedSources = new Dictionary<float, Resource>();
         float qualityIndex = 0;
 
-        for (int i = 0; i < exploredResources.Count; i++)
+        for (int i = 0; i < orderedResources.Count; i++)
         {
-            qualityIndex = exploredResources[i].Amount / exploredResources[i].Distance;
-
-            sortedSources.Add(qualityIndex, exploredResources[i]);
+            qualityIndex = orderedResources[i].Amount / orderedResources[i].Distance;
+            sortedSources.Add(qualityIndex, orderedResources[i]);
         }
 
-        var resources = (from entry in sortedSources orderby entry.Key descending select entry.Value).Distinct().ToList();
-
-        return new Stack<Resource>(resources);
+        orderedResources = (from entry in sortedSources orderby entry.Key descending select entry.Value).Distinct().ToList();
+        OnInfoArrived?.Invoke();
     }
 }

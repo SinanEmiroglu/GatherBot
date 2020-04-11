@@ -1,31 +1,41 @@
 ﻿using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Game : MonoBehaviour
 {
-    [SerializeField] float radiusOfArea;
-    [SerializeField] int resourceCount;
-    [SerializeField] AgentController agentPrefab;
-    [SerializeField] Nest nestPrefab;
-    [SerializeField] Resource resourcePrefab;
+    public float radiusOfArea;
+    public AgentController agentPrefab;
+    public Nest nestPrefab;
+    public Resource resourcePrefab;
+    public TextMeshProUGUI AgentSizeUI;
+    public TextMeshProUGUI ResourceSizeUI;
 
     public static Game instance;
     public static Nest Nest => instance.nestPrefab;
-    public static List<Resource> Resources => instance.resources;
 
+    int agentCount;
+    int resourceCount;
     List<Resource> resources = new List<Resource>();
+    public void StartGame()
+    {
+        GenerateSources();
+        GetAgent<ExplorerAgent>(1, 10f);
+        GetAgent<UnemployedAgent>(agentCount, 5f);
+    }
 
     void Awake()
     {
         if (instance == null)
             instance = this;
-        
-        GenerateSources();
+
+        resourceCount = int.Parse(ResourceSizeUI.text);
+        agentCount = int.Parse(AgentSizeUI.text);
     }
 
     void GenerateSources()
     {
-        while (resourceCount >= resources.Count)
+        while (resourceCount >= resources.Count + 1)
         {
             bool isIntersect = false;
             var resource = Instantiate(resourcePrefab, GetRandomPosition(), Quaternion.identity);
@@ -53,12 +63,6 @@ public class Game : MonoBehaviour
             if (!isIntersect)
                 resources.Add(resource);
         }
-    }
-
-    public void StartGame()
-    {
-        GetAgent<ExplorerAgent>(1, 8);
-        GetAgent<UnemployedAgent>(4, 4);
     }
 
     float RandomizeSpeed(float value)
