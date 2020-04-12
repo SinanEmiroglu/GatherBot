@@ -7,7 +7,7 @@ public class Resource : MonoBehaviour
     public int Amount { get; private set; }
     public float Radius { get; private set; }
     public float Distance => GetDistanceToNest();
-    public bool IsDestroyed { get; private set; }
+    public bool IsConsumed { get; private set; }
     public bool IsExplored { get; private set; }
 
     SpriteRenderer _renderer;
@@ -19,7 +19,7 @@ public class Resource : MonoBehaviour
         SetScale();
 
         if (Amount <= 1)
-            Destroy(gameObject);
+            gameObject.SetActive(false);
     }
 
     public void ExploreResource()
@@ -51,5 +51,5 @@ public class Resource : MonoBehaviour
         return distance * distance;
     }
 
-    void OnDisable() => IsDestroyed = true;
+    void OnDisable() => IsConsumed = true;
 }

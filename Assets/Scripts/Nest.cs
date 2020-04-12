@@ -9,7 +9,8 @@ public class Nest : MonoBehaviour
     public int ResourceAmount;
     public TextMeshPro amountText;
     public event Action OnInfoArrived = delegate { };
-    public static List<Resource> orderedResources = new List<Resource>();
+
+    List<Resource> exploredResources = new List<Resource>();
 
     void OnTriggerEnter2D(Collider2D collision)
     {
@@ -19,19 +20,23 @@ public class Nest : MonoBehaviour
 
     public void SetExploredResources(List<Resource> resources)
     {
-        orderedResources = orderedResources.Union(resources).ToList();
-        orderedResources.RemoveAll(r => r == null);
+        exploredResources = exploredResources.Union(resources).ToList();
+        OnInfoArrived?.Invoke();
+    }
 
+    public Resource GetBestResource()
+    {
         Dictionary<float, Resource> sortedSources = new Dictionary<float, Resource>();
         float qualityIndex = 0;
 
-        for (int i = 0; i < orderedResources.Count; i++)
+        exploredResources.RemoveAll(r => r == null);
+
+        for (int i = 0; i < exploredResources.Count; i++)
         {
-            qualityIndex = orderedResources[i].Amount / orderedResources[i].Distance;
-            sortedSources.Add(qualityIndex, orderedResources[i]);
+            qualityIndex = exploredResources[i].Amount / exploredResources[i].Distance;
+            sortedSources.Add(qualityIndex, exploredResources[i]);
         }
 
-        orderedResources = (from entry in sortedSources orderby entry.Key descending select entry.Value).Distinct().ToList();
-        OnInfoArrived?.Invoke();
+        return (from entry in sortedSources orderby entry.Key descending select entry.Value).Distinct().ToList().FirstOrDefault();
     }
 }

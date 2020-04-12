@@ -1,7 +1,6 @@
-﻿using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 
-public abstract class BaseAgent
+public abstract class BaseStatus
 {
     protected GameObject _gameObject;
     protected Transform _transform;
@@ -15,18 +14,12 @@ public abstract class BaseAgent
     public virtual void TriggerEnter(Collider2D other) { }
     public virtual void TriggerExit(Collider2D other) { }
 
-    public BaseAgent(GameObject gameObject)
+    public BaseStatus(GameObject gameObject)
     {
         _gameObject = gameObject;
         _transform = gameObject.transform;
         _renderer = gameObject.GetComponent<SpriteRenderer>();
         movement = gameObject.GetComponent<Movement>();
         nest = Game.Nest;
-    }
-
-    protected Resource GetBestResource()
-    {
-        Nest.orderedResources.RemoveAll(r => r == null);
-        return Nest.orderedResources.FirstOrDefault();
     }
 }

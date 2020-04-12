@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExplorerAgent : BaseAgent
+public class Explorer : BaseStatus
 {
     int maxMemory = 3;
     List<Resource> memory = new List<Resource>();
     bool IsMemoryFull => memory.Count >= maxMemory;
 
-    public ExplorerAgent(GameObject gameObject) : base(gameObject) { }
+    public Explorer(GameObject gameObject) : base(gameObject) { }
 
     public override void OnEnable()
     {
@@ -18,13 +18,15 @@ public class ExplorerAgent : BaseAgent
 
     public override Type OnUpdate()
     {
-        if (IsMemoryFull)
+        if (IsMemoryFull) { 
             movement.SetTarget = nest.transform.position;
+            _renderer.sortingOrder = 1;
+        }
 
         if (movement.IsTargetReached())
             Explore();
 
-        return typeof(ExplorerAgent);
+        return typeof(Explorer);
     }
 
     public override void TriggerEnter(Collider2D other)
@@ -39,6 +41,12 @@ public class ExplorerAgent : BaseAgent
             memory.Clear();
             Explore();
         }
+    }
+
+    public override void TriggerExit(Collider2D other)
+    {
+        if (other.gameObject == nest.gameObject && !IsMemoryFull)
+            _renderer.sortingOrder = 5;
     }
 
     void Explore()

@@ -1,33 +1,31 @@
 ﻿using System;
 using UnityEngine;
 
-public class EmployedAgent : BaseAgent
+public class Employed : BaseStatus
 {
     int loadAmount = 1;
     bool isLoaded;
     Resource targetResource;
 
-    public EmployedAgent(GameObject gameObject) : base(gameObject) { }
+    public Employed(GameObject gameObject) : base(gameObject) { }
 
     public override void OnEnable()
     {
-        _gameObject.name = "EmployedAgent";
         _renderer.color = Color.green;
+        _gameObject.name = "EmployedAgent";
+        _renderer.sortingOrder = 5;
 
-        targetResource = GetBestResource();
+        targetResource = nest.GetBestResource();
         movement.SetTarget = targetResource.transform.position;
         movement.Move();
     }
 
     public override Type OnUpdate()
     {
-        if (targetResource == null)
-            return typeof(UnemployedAgent);
+        if (movement.IsTargetReached() && targetResource.IsConsumed)
+            return typeof(Unemployed);
 
-        if (Nest.orderedResources.Count <= 0)
-            return typeof(UnemployedAgent);
-
-        return typeof(EmployedAgent);
+        return typeof(Employed);
     }
 
     public override void TriggerEnter(Collider2D other)
@@ -42,11 +40,15 @@ public class EmployedAgent : BaseAgent
         {
             if (isLoaded)
                 UnloadResource();
+
+            targetResource = nest.GetBestResource();
+            movement.SetTarget = targetResource.transform.position;
         }
     }
 
     void LoadResource()
     {
+        _renderer.color = Color.yellow;
         targetResource.DecreaseAmount(loadAmount);
         movement.SetTarget = nest.transform.position;
         isLoaded = true;
@@ -54,8 +56,8 @@ public class EmployedAgent : BaseAgent
 
     void UnloadResource()
     {
+        _renderer.color = Color.green;
         nest.ResourceAmount += loadAmount;
-        movement.SetTarget = GetBestResource().transform.position;
         isLoaded = false;
     }
 }

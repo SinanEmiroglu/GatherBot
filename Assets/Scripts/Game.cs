@@ -5,7 +5,7 @@ using UnityEngine;
 public class Game : MonoBehaviour
 {
     public float radiusOfArea;
-    public AgentController agentPrefab;
+    public Agent agentPrefab;
     public Nest nestPrefab;
     public Resource resourcePrefab;
     public TextMeshProUGUI AgentSizeUI;
@@ -17,20 +17,20 @@ public class Game : MonoBehaviour
     int agentCount;
     int resourceCount;
     List<Resource> resources = new List<Resource>();
+
     public void StartGame()
     {
+        resourceCount = int.Parse(ResourceSizeUI.text);
+        agentCount = int.Parse(AgentSizeUI.text);
         GenerateSources();
-        GetAgent<ExplorerAgent>(1, 10f);
-        GetAgent<UnemployedAgent>(agentCount, 5f);
+        GetAgent<Explorer>(1, 10f);
+        GetAgent<Unemployed>(agentCount, 6f);
     }
 
     void Awake()
     {
         if (instance == null)
             instance = this;
-
-        resourceCount = int.Parse(ResourceSizeUI.text);
-        agentCount = int.Parse(AgentSizeUI.text);
     }
 
     void GenerateSources()
@@ -70,7 +70,7 @@ public class Game : MonoBehaviour
         return Random.Range(0.6f, 1.0f) * value;
     }
 
-    void GetAgent<T>(int count, float speed) where T : BaseAgent
+    void GetAgent<T>(int count, float speed) where T : BaseStatus
     {
         for (int i = 0; i < count; i++)
         {
@@ -78,7 +78,7 @@ public class Game : MonoBehaviour
 
             var movement = newAgent.GetComponent<Movement>();
 
-            newAgent.SwitchAgent(typeof(T));
+            newAgent.SwitchStatus(typeof(T));
             movement.Speed = RandomizeSpeed(speed);
         }
     }

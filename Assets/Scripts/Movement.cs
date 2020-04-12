@@ -24,7 +24,7 @@ public class Movement : MonoBehaviour
     public bool IsTargetReached()
     {
         float distance = Vector3.SqrMagnitude(SetTarget - _transform.position);
-        return distance <= .08f;
+        return distance <= .09f;
     }
 
     Vector3 GetDirection()
