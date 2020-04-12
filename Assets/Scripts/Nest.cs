@@ -37,6 +37,6 @@ public class Nest : MonoBehaviour
             sortedSources.Add(qualityIndex, exploredResources[i]);
         }
 
-        return (from entry in sortedSources orderby entry.Key descending select entry.Value).Distinct().ToList().FirstOrDefault();
+        return (from entry in sortedSources orderby entry.Key descending select entry.Value).Distinct().ToList().First();
     }
 }

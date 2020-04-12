@@ -45,7 +45,15 @@ public class Unemployed : BaseStatus
         movement.SetTarget = nest.transform.position;
         _gameObject.name = "UnemployedAgent";
         _renderer.color = Color.red;
+
+        Debug.Log("<color=red>Unemployed: </color>Waiting for the new information in the nest.");
     }
 
-    void Recruit() => targetResource = nest.GetBestResource();
+    void Recruit() 
+    {
+        if (nest.GetBestResource() == null)
+            return;
+
+        targetResource = nest.GetBestResource(); 
+    }
 }

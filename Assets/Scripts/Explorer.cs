@@ -14,11 +14,14 @@ public class Explorer : BaseStatus
     {
         _gameObject.name = "ExplorerAgent";
         Explore();
+
+        Debug.Log("<color=white>Explorer: </color>Getting out to explore new resources.");
     }
 
     public override Type OnUpdate()
     {
-        if (IsMemoryFull) { 
+        if (IsMemoryFull)
+        {
             movement.SetTarget = nest.transform.position;
             _renderer.sortingOrder = 1;
         }
@@ -38,8 +41,10 @@ public class Explorer : BaseStatus
         {
             memory.RemoveAll(n => n == null);
             nest.SetExploredResources(memory);
+            Debug.Log("<color=white>Explorer: </color>" + memory.Count + " resources are successfully recorded on a list of the explored resources.");
             memory.Clear();
             Explore();
+            Debug.Log("<color=white>Explorer: </color>Getting out to explore new resources.");
         }
     }
 
@@ -51,7 +56,7 @@ public class Explorer : BaseStatus
 
     void Explore()
     {
-        movement.SetTarget = Game.instance.GetRandomPosition();
+        movement.SetTarget = GetRandomDirection();
         movement.Move();
     }
 
@@ -61,6 +66,23 @@ public class Explorer : BaseStatus
         {
             resource.ExploreResource();
             memory.Add(resource);
+
+            Debug.Log("<color=white>Explorer: </color>" + resource.name + " is just exploited.");
         }
+    }
+
+    Vector2 GetRandomDirection()
+    {
+        Vector2 randomPoint;
+        Vector2 direction;
+
+        do
+        {
+            randomPoint = UnityEngine.Random.onUnitSphere * UnityEngine.Random.Range(2f, 10f) + nest.transform.position;
+            direction = randomPoint - (Vector2)_transform.position;
+        }
+        while (Vector2.Dot(direction, randomPoint) < 0.5f);
+
+        return randomPoint;
     }
 }

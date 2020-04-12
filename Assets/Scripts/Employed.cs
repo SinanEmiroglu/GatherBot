@@ -18,6 +18,8 @@ public class Employed : BaseStatus
         targetResource = nest.GetBestResource();
         movement.SetTarget = targetResource.transform.position;
         movement.Move();
+
+        //Debug.Log("<color=green>Employed: </color>Going to gather "+ targetResource.name);
     }
 
     public override Type OnUpdate()
@@ -52,6 +54,8 @@ public class Employed : BaseStatus
         targetResource.DecreaseAmount(loadAmount);
         movement.SetTarget = nest.transform.position;
         isLoaded = true;
+
+        Debug.Log("<color=yellow>Employed: </color>Going to the nest to unload " + targetResource.name );
     }
 
     void UnloadResource()
@@ -59,5 +63,7 @@ public class Employed : BaseStatus
         _renderer.color = Color.green;
         nest.ResourceAmount += loadAmount;
         isLoaded = false;
+
+        Debug.Log("<color=green>Employed: </color>Going to gather " + targetResource.name);
     }
 }

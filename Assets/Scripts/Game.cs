@@ -24,7 +24,7 @@ public class Game : MonoBehaviour
         agentCount = int.Parse(AgentSizeUI.text);
         GenerateSources();
         GetAgent<Explorer>(1, 10f);
-        GetAgent<Unemployed>(agentCount, 6f);
+        GetAgent<Unemployed>(agentCount, 3f);
     }
 
     void Awake()
