@@ -3,36 +3,21 @@
 public class Movement : MonoBehaviour
 {
     public float Speed;
+    public Vector2 SetTarget { get; set; }
 
-    public Vector3 SetTarget { get; set; }
-    public float TargetLength { get; set; }
-
-    private bool isMoving;
-    private Transform _transform;
-    private void Awake() => _transform = transform;
+    bool isMoving;
+    Transform _transform;
     public void Move() => isMoving = true;
     public void Stop() => isMoving = false;
+    public bool IsTargetReached() => Vector2.SqrMagnitude(SetTarget - (Vector2)_transform.position) <= .09f;
+
+    void Awake() => _transform = transform;
 
     void Update()
     {
-        if (!isMoving)
-            return;
-
-        _transform.position += Speed * GetDirection() * Time.deltaTime;
+        if (isMoving)
+            _transform.position = (Vector2)_transform.position + (Speed * GetDirection() * Time.deltaTime);
     }
 
-    public bool IsTargetReached()
-    {
-        float distance = Vector3.SqrMagnitude(SetTarget - _transform.position);
-        return distance <= .09f;
-    }
-
-    Vector3 GetDirection()
-    {
-        var direction = SetTarget - _transform.position;
-        var flatDirection = new Vector3(direction.x, direction.y, 0);
-        flatDirection.Normalize();
-
-        return flatDirection;
-    }
+    Vector2 GetDirection() => (SetTarget - (Vector2)_transform.position).normalized;
 }

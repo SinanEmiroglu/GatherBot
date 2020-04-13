@@ -7,6 +7,7 @@ public class Employed : BaseStatus
     bool isLoaded;
     Resource targetResource;
 
+    #region Overridden Methods
     public Employed(GameObject gameObject) : base(gameObject) { }
 
     public override void OnEnable()
@@ -15,15 +16,14 @@ public class Employed : BaseStatus
         _gameObject.name = "EmployedAgent";
         _renderer.sortingOrder = 5;
 
-        targetResource = nest.GetBestResource();
-        movement.SetTarget = targetResource.transform.position;
-        movement.Move();
-
-        //Debug.Log("<color=green>Employed: </color>Going to gather "+ targetResource.name);
+        ChaseResource();
     }
 
     public override Type OnUpdate()
     {
+        if (targetResource == null)
+            return typeof(Unemployed);
+
         if (movement.IsTargetReached() && targetResource.IsConsumed)
             return typeof(Unemployed);
 
@@ -33,19 +33,26 @@ public class Employed : BaseStatus
     public override void TriggerEnter(Collider2D other)
     {
         if (other.GetComponent<Resource>() != null)
-        {
             if (targetResource == other.GetComponent<Resource>())
                 LoadResource();
-        }
 
         if (other.gameObject == nest.gameObject)
         {
             if (isLoaded)
                 UnloadResource();
 
-            targetResource = nest.GetBestResource();
-            movement.SetTarget = targetResource.transform.position;
+            ChaseResource();
         }
+    }
+    #endregion
+
+    void ChaseResource()
+    {
+        targetResource = nest.GetBestResource();
+        if (targetResource != null)
+            movement.SetTarget = targetResource.transform.position;
+
+        movement.Move();
     }
 
     void LoadResource()
@@ -55,7 +62,7 @@ public class Employed : BaseStatus
         movement.SetTarget = nest.transform.position;
         isLoaded = true;
 
-        Debug.Log("<color=yellow>Employed: </color>Going to the nest to unload " + targetResource.name );
+        Debug.Log("<color=yellow>Employed: </color>Going to the nest to unload " + targetResource.name);
     }
 
     void UnloadResource()

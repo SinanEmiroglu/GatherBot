@@ -8,8 +8,8 @@ public class Explorer : BaseStatus
     List<Resource> memory = new List<Resource>();
     bool IsMemoryFull => memory.Count >= maxMemory;
 
+    #region Overridden Methods
     public Explorer(GameObject gameObject) : base(gameObject) { }
-
     public override void OnEnable()
     {
         _gameObject.name = "ExplorerAgent";
@@ -39,7 +39,7 @@ public class Explorer : BaseStatus
 
         if (other.gameObject == nest.gameObject && IsMemoryFull)
         {
-            memory.RemoveAll(n => n == null);
+            memory.RemoveAll(r => r.IsConsumed);
             nest.SetExploredResources(memory);
             Debug.Log("<color=white>Explorer: </color>" + memory.Count + " resources are successfully recorded on a list of the explored resources.");
             memory.Clear();
@@ -53,6 +53,7 @@ public class Explorer : BaseStatus
         if (other.gameObject == nest.gameObject && !IsMemoryFull)
             _renderer.sortingOrder = 5;
     }
+    #endregion
 
     void Explore()
     {
@@ -70,7 +71,7 @@ public class Explorer : BaseStatus
             Debug.Log("<color=white>Explorer: </color>" + resource.name + " is just exploited.");
         }
     }
-
+    //REPEAT
     Vector2 GetRandomDirection()
     {
         Vector2 randomPoint;

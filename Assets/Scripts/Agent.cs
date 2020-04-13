@@ -31,7 +31,7 @@ public class Agent : MonoBehaviour
     void Update()
     {
         if (currentStatus == null)
-            currentStatus = availableStatuses.Values.First();
+            return;
 
         var nextStatus = currentStatus?.OnUpdate();
 

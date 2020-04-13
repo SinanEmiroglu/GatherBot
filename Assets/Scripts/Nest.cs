@@ -8,7 +8,7 @@ public class Nest : MonoBehaviour
 {
     public int ResourceAmount;
     public TextMeshPro amountText;
-    public event Action OnInfoArrived = delegate { };
+    public event Action OnExplorerReturned = delegate { };
 
     List<Resource> exploredResources = new List<Resource>();
 
@@ -21,22 +21,22 @@ public class Nest : MonoBehaviour
     public void SetExploredResources(List<Resource> resources)
     {
         exploredResources = exploredResources.Union(resources).ToList();
-        OnInfoArrived?.Invoke();
+        OnExplorerReturned?.Invoke();
     }
 
     public Resource GetBestResource()
     {
-        Dictionary<float, Resource> sortedSources = new Dictionary<float, Resource>();
+        Dictionary<float, Resource> sortedResources = new Dictionary<float, Resource>();
         float qualityIndex = 0;
 
-        exploredResources.RemoveAll(r => r == null);
+        exploredResources.RemoveAll(r => r.IsConsumed);
 
         for (int i = 0; i < exploredResources.Count; i++)
         {
             qualityIndex = exploredResources[i].Amount / exploredResources[i].Distance;
-            sortedSources.Add(qualityIndex, exploredResources[i]);
+            sortedResources.Add(qualityIndex, exploredResources[i]);
         }
 
-        return (from entry in sortedSources orderby entry.Key descending select entry.Value).Distinct().ToList().First();
+        return exploredResources.Count > 0 ? (from entry in sortedResources orderby entry.Key descending select entry.Value).Distinct().ToList().First() : null;
     }
 }

@@ -22,9 +22,10 @@ public class Game : MonoBehaviour
     {
         resourceCount = int.Parse(ResourceSizeUI.text);
         agentCount = int.Parse(AgentSizeUI.text);
+
         GenerateSources();
-        GetAgent<Explorer>(1, 10f);
-        GetAgent<Unemployed>(agentCount, 3f);
+        SpawnAgent<Explorer>(1, 10f);
+        SpawnAgent<Unemployed>(agentCount, 3f);
     }
 
     void Awake()
@@ -65,12 +66,7 @@ public class Game : MonoBehaviour
         }
     }
 
-    float RandomizeSpeed(float value)
-    {
-        return Random.Range(0.6f, 1.0f) * value;
-    }
-
-    void GetAgent<T>(int count, float speed) where T : BaseStatus
+    void SpawnAgent<T>(int count, float speed) where T : BaseStatus
     {
         for (int i = 0; i < count; i++)
         {
@@ -79,14 +75,13 @@ public class Game : MonoBehaviour
             var movement = newAgent.GetComponent<Movement>();
 
             newAgent.SwitchStatus(typeof(T));
-            movement.Speed = RandomizeSpeed(speed);
+            movement.Speed = Random.Range(0.6f, 1.2f) * speed;
         }
     }
 
-    public Vector3 GetRandomPosition()
+    Vector2 GetRandomPosition()
     {
-        var position = UnityEngine.Random.insideUnitSphere * radiusOfArea + nestPrefab.transform.position;
-
-        return new Vector3(position.x, position.y, 0);
+        var position = UnityEngine.Random.insideUnitCircle * radiusOfArea + (Vector2)nestPrefab.transform.position;
+        return new Vector2(position.x, position.y);
     }
 }

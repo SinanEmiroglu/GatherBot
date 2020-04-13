@@ -36,9 +36,9 @@ public class Resource : MonoBehaviour
         _renderer = GetComponent<SpriteRenderer>();
         _renderer.color = Color.gray;
         Amount = Random.Range(5, 20);
-        SetScale();
         Radius = GetComponent<CircleCollider2D>().radius;
         gameObject.name = "Resource[" + Amount + "]";
+        SetScale();
     }
 
     void OnTriggerEnter2D(Collider2D collision) => amountText.text = Amount.ToString();

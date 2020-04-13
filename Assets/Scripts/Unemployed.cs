@@ -5,16 +5,22 @@ public class Unemployed : BaseStatus
 {
     Resource targetResource;
 
+    #region Overridden Methods
     public Unemployed(GameObject gameObject) : base(gameObject) { }
-    public override void OnEnable() => SetStatus();
+    public override void OnEnable()
+    {
+        movement.SetTarget = nest.transform.position;
+        _gameObject.name = "UnemployedAgent";
+        _renderer.color = Color.red;
+        _renderer.sortingOrder = 1;
+        Debug.Log("<color=red>Unemployed: </color>Waiting for the new information in the nest.");
+    }
 
     public override Type OnUpdate()
     {
         if (targetResource != null)
-        {
             if (!targetResource.IsConsumed)
                 return typeof(Employed);
-        }
 
         return typeof(Unemployed);
     }
@@ -23,8 +29,8 @@ public class Unemployed : BaseStatus
     {
         if (other.gameObject == nest.gameObject)
         {
-            nest.OnInfoArrived += InfoArrivedHandler;
-            _renderer.sortingOrder = 1;
+            nest.OnExplorerReturned += ExplorerReturnHandler;
+            //_renderer.sortingOrder = 1;
             Recruit();
         }
     }
@@ -32,28 +38,10 @@ public class Unemployed : BaseStatus
     public override void TriggerExit(Collider2D other)
     {
         if (other.gameObject == nest.gameObject)
-            nest.OnInfoArrived -= InfoArrivedHandler;
+            nest.OnExplorerReturned -= ExplorerReturnHandler;
     }
+    #endregion
 
-    void InfoArrivedHandler()
-    {
-        Recruit();
-    }
-
-    void SetStatus()
-    {
-        movement.SetTarget = nest.transform.position;
-        _gameObject.name = "UnemployedAgent";
-        _renderer.color = Color.red;
-
-        Debug.Log("<color=red>Unemployed: </color>Waiting for the new information in the nest.");
-    }
-
-    void Recruit() 
-    {
-        if (nest.GetBestResource() == null)
-            return;
-
-        targetResource = nest.GetBestResource(); 
-    }
+    void Recruit() => targetResource = nest.GetBestResource();
+    void ExplorerReturnHandler() => Recruit();
 }
