@@ -23,18 +23,18 @@ public class Nest : MonoBehaviour
         exploredResources = exploredResources.Union(resources).ToList();
         OnExplorerReturned?.Invoke();
     }
-    //IMPROVE QUALITY
+
     public Resource GetBestResource()
     {
         Dictionary<float, Resource> sortedResources = new Dictionary<float, Resource>();
-        float qualityIndex = 0;
+        float qualityRatio = 0;
 
         exploredResources.RemoveAll(r => r.IsConsumed);
 
         for (int i = 0; i < exploredResources.Count; i++)
         {
-            qualityIndex = exploredResources[i].Amount / exploredResources[i].Distance;
-            sortedResources.Add(qualityIndex, exploredResources[i]);
+            qualityRatio = exploredResources[i].Quality / (exploredResources[i].GetDistanceToNest * 2f);
+            sortedResources.Add(qualityRatio, exploredResources[i]);
         }
 
         return exploredResources.Count > 0 ? (from entry in sortedResources orderby entry.Key descending select entry.Value).Distinct().ToList().First() : null;

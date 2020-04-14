@@ -69,7 +69,7 @@ public class Employed : BaseStatus
     void UnloadResource()
     {
         _renderer.color = Color.white;
-        nest.ResourceAmount += loadAmount;
+        nest.ResourceAmount += targetResource.Quality * loadAmount;
         _renderer.sortingOrder = 5;
         isLoaded = false;
 

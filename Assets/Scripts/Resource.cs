@@ -3,53 +3,46 @@ using UnityEngine;
 
 public class Resource : MonoBehaviour
 {
-    public TextMeshPro amountText;
-    public int Amount { get; private set; }
+    public TextMeshPro qualityText;
+    public int Quality { get; private set; }
     public float Radius { get; private set; }
-    public float Distance => GetDistanceToNest();
+    public float GetDistanceToNest => Mathf.Sqrt(Vector3.SqrMagnitude(transform.position - Game.Nest.transform.position));
     public bool IsConsumed { get; private set; }
     public bool IsExplored { get; private set; }
 
+    int amount;
     SpriteRenderer _renderer;
 
     public void DecreaseAmount(int amount)
     {
-        Amount -= amount;
-
+        this.amount -= amount;
         SetScale();
-
-        if (Amount <= 1)
+        if (this.amount <= 3)
             gameObject.SetActive(false);
     }
 
     public void ExploreResource()
     {
-        amountText.gameObject.SetActive(true);
-        amountText.text = Amount.ToString();
-        _renderer.color = Color.yellow;
+        qualityText.gameObject.SetActive(true);
+        _renderer.color = new Color(1f, .8f, .3f);
         IsExplored = true;
     }
 
     void Awake()
     {
         IsExplored = false;
+        amount = Random.Range(5, 15);
+        Quality = Random.Range(1, 5);
+        Radius = transform.localScale.x * .5f;
         _renderer = GetComponent<SpriteRenderer>();
         _renderer.color = Color.gray;
-        Amount = Random.Range(5, 20);
-        Radius = GetComponent<CircleCollider2D>().radius;
-        gameObject.name = "Resource[" + Amount + "]";
+        gameObject.name = "Resource[" + Quality + "]";
         SetScale();
+
+        for (int i = 0; i < Quality; i++)
+            qualityText.text += "+";
     }
 
-    void OnTriggerEnter2D(Collider2D collision) => amountText.text = Amount.ToString();
-
-    void SetScale() => transform.localScale = new Vector3(1, 1, 0) * Amount * 0.1f;
-
-    float GetDistanceToNest()
-    {
-        var distance = Vector3.SqrMagnitude(transform.position - Game.Nest.transform.position);
-        return distance * distance;
-    }
-
+    void SetScale() => transform.localScale = new Vector3(1, 1, 0) * amount * 0.15f;
     void OnDisable() => IsConsumed = true;
 }

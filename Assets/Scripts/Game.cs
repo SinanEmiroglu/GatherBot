@@ -29,6 +29,12 @@ public class Game : MonoBehaviour
         SpawnAgent<Unemployed>(agentCount, 5f);
     }
 
+    public void Restart()
+    {
+        UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(0);
+        UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(0);
+    }
+
     void Awake()
     {
         if (instance == null)
@@ -43,7 +49,7 @@ public class Game : MonoBehaviour
             var resource = Instantiate(resourcePrefab, GetRandomPoint(-10, 10, -8, 8), Quaternion.identity);
             var distanceToNest = Vector3.SqrMagnitude(nestPrefab.transform.position - resource.transform.position);
 
-            if (distanceToNest <= (resource.Radius * resource.Radius) + 6f)
+            if (Mathf.Sqrt(distanceToNest) <= resource.Radius + 3)
             {
                 Destroy(resource.gameObject);
                 isIntersect = true;
@@ -52,9 +58,9 @@ public class Game : MonoBehaviour
             foreach (var src in resources)
             {
                 var distanceBetweenSources = Vector3.SqrMagnitude(src.transform.position - resource.transform.position);
-                var radiusSum = (src.Radius + resource.Radius) * (src.Radius + resource.Radius);
+                var radiusSum = src.Radius + resource.Radius;
 
-                if (distanceBetweenSources <= radiusSum)
+                if (Mathf.Sqrt(distanceBetweenSources) <= radiusSum + 1)
                 {
                     Destroy(resource.gameObject);
                     isIntersect = true;
