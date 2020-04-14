@@ -9,11 +9,11 @@ public class Unemployed : BaseStatus
     public Unemployed(GameObject gameObject) : base(gameObject) { }
     public override void OnEnable()
     {
-        movement.SetTarget = nest.transform.position;
+        movement.SetTarget = nestPosition;
         _gameObject.name = "UnemployedAgent";
-        _renderer.color = Color.red;
+        _renderer.color = Color.blue;
         _renderer.sortingOrder = 1;
-        Debug.Log("<color=red>Unemployed: </color>Waiting for the new information in the nest.");
+        Debug.Log("<color=blue>Unemployed: </color>Waiting for the new information in the nest.");
     }
 
     public override Type OnUpdate()
@@ -30,7 +30,7 @@ public class Unemployed : BaseStatus
         if (other.gameObject == nest.gameObject)
         {
             nest.OnExplorerReturned += ExplorerReturnHandler;
-            //_renderer.sortingOrder = 1;
+            _renderer.sortingOrder = 1;
             Recruit();
         }
     }

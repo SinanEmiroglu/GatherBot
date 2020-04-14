@@ -15,8 +15,10 @@ public class Movement : MonoBehaviour
 
     void Update()
     {
-        if (isMoving)
-            _transform.position = (Vector2)_transform.position + (Speed * GetDirection() * Time.deltaTime);
+        if (!isMoving)
+            return;
+
+        _transform.position = (Vector2)_transform.position + (Speed * GetDirection() * Time.deltaTime);
     }
 
     Vector2 GetDirection() => (SetTarget - (Vector2)_transform.position).normalized;

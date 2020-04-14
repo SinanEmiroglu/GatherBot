@@ -7,6 +7,7 @@ public abstract class BaseStatus
     protected SpriteRenderer _renderer;
     protected Movement movement;
     protected Nest nest;
+    protected Vector2 nestPosition;
 
     public abstract System.Type OnUpdate();
     public virtual void OnEnable() { }
@@ -21,5 +22,6 @@ public abstract class BaseStatus
         _renderer = gameObject.GetComponent<SpriteRenderer>();
         movement = gameObject.GetComponent<Movement>();
         nest = Game.Nest;
+        nestPosition = nest.transform.position;
     }
 }

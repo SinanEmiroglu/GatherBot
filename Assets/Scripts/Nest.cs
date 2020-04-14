@@ -23,7 +23,7 @@ public class Nest : MonoBehaviour
         exploredResources = exploredResources.Union(resources).ToList();
         OnExplorerReturned?.Invoke();
     }
-
+    //IMPROVE QUALITY
     public Resource GetBestResource()
     {
         Dictionary<float, Resource> sortedResources = new Dictionary<float, Resource>();

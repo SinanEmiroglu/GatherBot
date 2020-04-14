@@ -13,16 +13,17 @@ public class Explorer : BaseStatus
     public override void OnEnable()
     {
         _gameObject.name = "ExplorerAgent";
+        _renderer.color = Color.green;
         Explore();
 
-        Debug.Log("<color=white>Explorer: </color>Getting out to explore new resources.");
+        Debug.Log("<color=green>Explorer: </color>Getting out to explore new resources.");
     }
 
     public override Type OnUpdate()
     {
         if (IsMemoryFull)
         {
-            movement.SetTarget = nest.transform.position;
+            movement.SetTarget = nestPosition;
             _renderer.sortingOrder = 1;
         }
 
@@ -41,10 +42,10 @@ public class Explorer : BaseStatus
         {
             memory.RemoveAll(r => r.IsConsumed);
             nest.SetExploredResources(memory);
-            Debug.Log("<color=white>Explorer: </color>" + memory.Count + " resources are successfully recorded on a list of the explored resources.");
+            Debug.Log("<color=green>Explorer: </color>" + memory.Count + " resources are successfully recorded on a list of the explored resources.");
             memory.Clear();
             Explore();
-            Debug.Log("<color=white>Explorer: </color>Getting out to explore new resources.");
+            Debug.Log("<color=green>Explorer: </color>Getting out to explore new resources.");
         }
     }
 
@@ -57,7 +58,7 @@ public class Explorer : BaseStatus
 
     void Explore()
     {
-        movement.SetTarget = GetRandomDirection();
+        movement.SetTarget = Game.GetRandomPoint(-12, 12, -9, 9);
         movement.Move();
     }
 
@@ -68,22 +69,7 @@ public class Explorer : BaseStatus
             resource.ExploreResource();
             memory.Add(resource);
 
-            Debug.Log("<color=white>Explorer: </color>" + resource.name + " is just exploited.");
+            Debug.Log("<color=green>Explorer: </color>" + resource.name + " is just exploited.");
         }
-    }
-    //REPEAT
-    Vector2 GetRandomDirection()
-    {
-        Vector2 randomPoint;
-        Vector2 direction;
-
-        do
-        {
-            randomPoint = UnityEngine.Random.onUnitSphere * UnityEngine.Random.Range(2f, 10f) + nest.transform.position;
-            direction = randomPoint - (Vector2)_transform.position;
-        }
-        while (Vector2.Dot(direction, randomPoint) < 0.5f);
-
-        return randomPoint;
     }
 }

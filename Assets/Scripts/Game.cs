@@ -13,6 +13,7 @@ public class Game : MonoBehaviour
 
     public static Game instance;
     public static Nest Nest => instance.nestPrefab;
+    public static Vector2 GetRandomPoint(float minX, float maxX, float minY, float maxY) => new Vector2(Random.Range(minX, maxX), Random.Range(minY, maxY));
 
     int agentCount;
     int resourceCount;
@@ -25,7 +26,7 @@ public class Game : MonoBehaviour
 
         GenerateSources();
         SpawnAgent<Explorer>(1, 10f);
-        SpawnAgent<Unemployed>(agentCount, 3f);
+        SpawnAgent<Unemployed>(agentCount, 5f);
     }
 
     void Awake()
@@ -39,7 +40,7 @@ public class Game : MonoBehaviour
         while (resourceCount >= resources.Count + 1)
         {
             bool isIntersect = false;
-            var resource = Instantiate(resourcePrefab, GetRandomPosition(), Quaternion.identity);
+            var resource = Instantiate(resourcePrefab, GetRandomPoint(-10, 10, -8, 8), Quaternion.identity);
             var distanceToNest = Vector3.SqrMagnitude(nestPrefab.transform.position - resource.transform.position);
 
             if (distanceToNest <= (resource.Radius * resource.Radius) + 6f)
@@ -75,13 +76,7 @@ public class Game : MonoBehaviour
             var movement = newAgent.GetComponent<Movement>();
 
             newAgent.SwitchStatus(typeof(T));
-            movement.Speed = Random.Range(0.6f, 1.2f) * speed;
+            movement.Speed = Random.Range(.5f, 2f) * speed;
         }
-    }
-
-    Vector2 GetRandomPosition()
-    {
-        var position = UnityEngine.Random.insideUnitCircle * radiusOfArea + (Vector2)nestPrefab.transform.position;
-        return new Vector2(position.x, position.y);
     }
 }

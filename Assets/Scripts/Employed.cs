@@ -12,7 +12,7 @@ public class Employed : BaseStatus
 
     public override void OnEnable()
     {
-        _renderer.color = Color.green;
+        _renderer.color = Color.white;
         _gameObject.name = "EmployedAgent";
         _renderer.sortingOrder = 5;
 
@@ -59,18 +59,20 @@ public class Employed : BaseStatus
     {
         _renderer.color = Color.yellow;
         targetResource.DecreaseAmount(loadAmount);
-        movement.SetTarget = nest.transform.position;
+        movement.SetTarget = nestPosition;
+        _renderer.sortingOrder = 1;
         isLoaded = true;
 
-        Debug.Log("<color=yellow>Employed: </color>Going to the nest to unload " + targetResource.name);
+        Debug.Log("<color=yellow>Employed (loaded): </color>Going to the nest to unload " + targetResource.name);
     }
 
     void UnloadResource()
     {
-        _renderer.color = Color.green;
+        _renderer.color = Color.white;
         nest.ResourceAmount += loadAmount;
+        _renderer.sortingOrder = 5;
         isLoaded = false;
 
-        Debug.Log("<color=green>Employed: </color>Going to gather " + targetResource.name);
+        Debug.Log("<color=white>Employed (empty): </color>Going to gather " + targetResource.name);
     }
 }
