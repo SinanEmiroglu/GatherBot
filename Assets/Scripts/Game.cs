@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class Game : MonoBehaviour
 {
@@ -15,18 +15,18 @@ public class Game : MonoBehaviour
     public static Nest Nest => instance.nestPrefab;
     public static Vector2 GetRandomPoint(float minX, float maxX, float minY, float maxY) => new Vector2(Random.Range(minX, maxX), Random.Range(minY, maxY));
 
-    int agentCount;
-    int resourceCount;
+    int agentSizeUI;
+    int resourceSizeUI;
     List<Resource> resources = new List<Resource>();
 
     public void StartGame()
     {
-        resourceCount = int.Parse(ResourceSizeUI.text);
-        agentCount = int.Parse(AgentSizeUI.text);
+        resourceSizeUI = int.Parse(ResourceSizeUI.text);
+        agentSizeUI = int.Parse(AgentSizeUI.text);
 
         GenerateSources();
         SpawnAgent<Explorer>(1, 10f);
-        SpawnAgent<Unemployed>(agentCount, 5f);
+        SpawnAgent<Unemployed>(agentSizeUI, 5f);
     }
 
     public void Restart()
@@ -43,7 +43,7 @@ public class Game : MonoBehaviour
 
     void GenerateSources()
     {
-        while (resourceCount >= resources.Count + 1)
+        while (resourceSizeUI >= resources.Count + 1)
         {
             bool isIntersect = false;
             var resource = Instantiate(resourcePrefab, GetRandomPoint(-10, 10, -8, 8), Quaternion.identity);

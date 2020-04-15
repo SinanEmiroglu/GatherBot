@@ -6,7 +6,9 @@ public class Explorer : BaseStatus
 {
     int maxMemory = 3;
     List<Resource> memory = new List<Resource>();
+    float timer;
     bool IsMemoryFull => memory.Count >= maxMemory;
+    bool IsTimeOut => timer >= 30;
 
     #region Overridden Methods
     public Explorer(GameObject gameObject) : base(gameObject) { }
@@ -16,12 +18,13 @@ public class Explorer : BaseStatus
         _renderer.color = Color.green;
         Explore();
 
-        Debug.Log("<color=green>Explorer: </color>Getting out to explore new resources.");
+        Debug.Log("<color=green><b>Explorer</b>: </color>Getting out to explore new resources.");
     }
 
     public override Type OnUpdate()
     {
-        if (IsMemoryFull)
+        timer += Time.deltaTime;
+        if (IsMemoryFull || IsTimeOut)
         {
             movement.SetTarget = nestPosition;
             _renderer.sortingOrder = 1;
@@ -38,14 +41,15 @@ public class Explorer : BaseStatus
         if (other.GetComponent<Resource>() != null)
             Exploit(other.GetComponent<Resource>());
 
-        if (other.gameObject == nest.gameObject && IsMemoryFull)
+        if (other.gameObject == nest.gameObject && (IsMemoryFull || IsTimeOut))
         {
             memory.RemoveAll(r => r.IsConsumed);
             nest.SetExploredResources(memory);
-            Debug.Log("<color=green>Explorer: </color>" + memory.Count + " resources are successfully recorded on a list of the explored resources.");
+            Debug.Log("<color=green><b>Explorer</b>: </color>" + memory.Count + " resources are successfully recorded on a list of the explored resources.");
             memory.Clear();
             Explore();
-            Debug.Log("<color=green>Explorer: </color>Getting out to explore new resources.");
+            timer = 0;
+            Debug.Log("<color=green><b>Explorer</b>: </color>Getting out to explore new resources.");
         }
     }
 
@@ -69,7 +73,7 @@ public class Explorer : BaseStatus
             resource.ExploreResource();
             memory.Add(resource);
 
-            Debug.Log("<color=green>Explorer: </color>" + resource.name + " is just exploited.");
+            Debug.Log("<color=green><b>Explorer</b>: </color>" + resource.name + " is just exploited.");
         }
     }
 }

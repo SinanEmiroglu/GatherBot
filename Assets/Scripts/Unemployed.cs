@@ -13,7 +13,7 @@ public class Unemployed : BaseStatus
         _gameObject.name = "UnemployedAgent";
         _renderer.color = Color.blue;
         _renderer.sortingOrder = 1;
-        Debug.Log("<color=blue>Unemployed: </color>Waiting for the new information in the nest.");
+        Debug.Log("<color=blue><b>Unemployed</b>: </color>Waiting for the new information in the nest.");
     }
 
     public override Type OnUpdate()
