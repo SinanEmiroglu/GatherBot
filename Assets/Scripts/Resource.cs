@@ -36,7 +36,7 @@ public class Resource : MonoBehaviour
         Radius = transform.localScale.x * .5f;
         _renderer = GetComponent<SpriteRenderer>();
         _renderer.color = Color.gray;
-        gameObject.name = "<b>Resource[Quality: " + Quality + ", Distance: " + GetDistanceToNest.ToString("#.0") + "]</b>";
+        gameObject.name = "Resource[Quality: " + Quality + ", Distance: " + GetDistanceToNest.ToString("#.0") + "]";
         SetScale();
 
         for (int i = 0; i < Quality; i++)

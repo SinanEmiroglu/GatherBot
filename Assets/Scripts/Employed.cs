@@ -63,7 +63,7 @@ public class Employed : BaseStatus
         _renderer.sortingOrder = 1;
         isLoaded = true;
 
-        Debug.Log("<color=yellow><b>Employed (loaded)</b>: </color>Going to the nest to unload " + targetResource.name);
+        Debug.Log("<color=yellow><b>Employed (loaded)</b>: </color>Going to the nest to unload " + "<b>" + targetResource.name + "</b>");
     }
 
     void UnloadResource()
@@ -73,6 +73,6 @@ public class Employed : BaseStatus
         _renderer.sortingOrder = 5;
         isLoaded = false;
 
-        Debug.Log("<color=white><b>Employed (empty)</b>: </color>Going to gather " + targetResource.name);
+        Debug.Log("<color=white><b>Employed (empty)</b>: </color>Going to gather " + "<b>" + targetResource.name + "</b>");
     }
 }
